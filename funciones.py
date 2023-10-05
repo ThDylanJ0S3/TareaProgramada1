@@ -151,6 +151,40 @@ def seleccionarMoneda(listaPaises):
         except:
             print("\nEl número ingresado es invalido, asegúrese de que el número ingresado este en la lista de continentes disponibles de arriba\n")
 
+def seleccionarPais(listaPaises,continente):
+    """
+    Función: crea un menu que permite al usuario elegir un país del continente elegido
+    Entradas:
+    -listaPaises(list): lista con todos los datos de cada país
+    Salidas:
+    listaPaisCot[opcion-1](list): lista con el continente elegido por el usuario
+    """
+    listaPaisesCont = []
+    #Ciclo para crear la lista que se mostrara al usuario como submenu
+    for pais in listaPaises:
+        if continente == pais[5]:
+            listaPaisesCont.append(pais[0])
+
+    listaPaisesCont.sort() #Ordena la lista de manera alfabética par mostrarla en el submenu
+    
+    print("\n\n******************************************")
+    print("********* Países disponibles ********")
+    print("******************************************\n\n")
+    #Ciclo que muestra el submenu
+    for index,pais in enumerate(listaPaisesCont):
+        print("\nIngrese "+ str(index+1) + ": " + str(pais))
+    #Ciclo para que el usuario elija una opcion 
+    while True:
+        opcion = input("Ingrese un número: ")
+        try:
+            opcion = int(opcion)
+            if 1 <= opcion <= len(listaPaisesCont):
+                return listaPaisesCont[opcion-1]
+            else:
+                print("\nEl número ingresado es invalido, debe ingresar un número del 1 al " + str(len(listaPaisesCont)) + "\n")
+        except:
+            print("\nEl número ingresado es invalido, asegúrese de que el número ingresado este en la lista de países disponibles de arriba\n")
+
 def crearPaisesPorContinente(listaPaises):
     """
     Función: crea un archivo HTML con todos los paises de un continente
@@ -301,7 +335,40 @@ def crearCodigoPais(listaPaises):
     Salidas:
     paisesPorContinente.html: archivo HTML con la información pedida
     """
-    return "Función por construir"
+    continente = seleccionarContinente(listaPaises)
+    buscarPais = seleccionarPais(listaPaises,continente)
+    print(buscarPais)
+    with open(f"./data/InformeCodigosPais.html","w") as archivoContinente:
+        archivoContinente.write("<html><head><title>Informe de pais </title></head><body>")
+        archivoContinente.write(f"<h1>Informe del pais seleccionado</h1>")
+        archivoContinente.write("<table>")
+        archivoContinente.write("<tr style='background-color: #a2c8cc;'><th>Continente</th><th>Nombre del pais</th><th>CountryCode</th><th>flipCode</th><th>isoNumeric</th><th>isoAlpha3</th><th>geonameld</th></tr>")
+        i = 0
+        #Ciclo para crear cada fila
+        for pais in listaPaises:
+            if pais[0] == buscarPais:
+                if i % 2 == 0:
+                    fondo = "#c5e0dc"
+                else:
+                    fondo = "#f8edeb"
+                archivoContinente.write(f"<tr style='background-color: {fondo}'>")
+                archivoContinente.write(f"<td>{pais[5][0]}</td>")
+                archivoContinente.write(f"<td>{pais[0]}</td>")
+                archivoContinente.write(f"<td>{pais[1][0]}</td>")
+                archivoContinente.write(f"<td>{pais[1][1]}</td>")
+                archivoContinente.write(f"<td>{pais[1][2]}</td>")
+                archivoContinente.write(f"<td>{pais[1][3]}</td>")
+                archivoContinente.write(f"<td>{pais[1][4]}</td>")
+                i += 1
+                archivoContinente.write("</tr>")
+        
+        archivoContinente.write("</table></body></html>")
+        archivoContinente.close()
+        print("\n\n***************************************************************************")
+        print("************* Archivo HTML creado con " +str(i) + " registros *************")
+        print("***************************************************************************\n\n")
+    
+            
 
 def crearHablantesIdiomas(listaPaises):
     """
