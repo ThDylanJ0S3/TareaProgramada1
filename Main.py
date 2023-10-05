@@ -20,9 +20,6 @@ def menu(listaPaises):
         if opcion >=1 and opcion <=4:
             if opcion == 1:
                 listaPaises = crearEstructura()
-                print("\n\n******************************************")
-                print("************* Archivo Creado *************")
-                print("******************************************\n\n")
             elif opcion == 2 and listaPaises != []:                
                 crearArchivoXML(listaPaises)
             elif opcion == 3 and listaPaises != []:
@@ -61,11 +58,11 @@ def menu(listaPaises):
                         print("******************************************\n\n")
                         return menu(listaPaises)
             elif opcion == 4:
-                print("\n\n******************************************")
-                print("************ Programa Cerrado, esperamos vuelva pronto ************")
-                print("******************************************\n\n") 
+                print("\n\n****************************************************************************************************************")
+                print("************ Programa Cerrado, esperamos le haya sido util la información consultada, vuelva pronto ************")
+                print("****************************************************************************************************************\n\n") 
                 return
-            elif 2 <= opcion <= 4 and listaPaises == []:
+            elif 2 <= opcion <= 3 and listaPaises == []:
                 print("\n\n******************************************")
                 print("*** No se ha creado ninguna estructura ***")
                 print("******************************************\n\n")
