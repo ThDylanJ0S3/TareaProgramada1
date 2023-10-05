@@ -19,7 +19,7 @@ def crearEstructura():
     """
     listaPaises = []
     with open("./data/ArchivoDePaises.csv","r") as archivoP:
-        i = 0
+        i = -1
         lectorCSV = csv.reader(archivoP)
         for fila in lectorCSV:          
             nombre = fila[1]  #0 countryName
@@ -32,6 +32,10 @@ def crearEstructura():
             lenguages = fila[10].split(",") #7 Lenguas 
             filaDatos = [nombre,codigos,currencyCode,population,capital,continente,areaInSqKm,lenguages]
             listaPaises.append(filaDatos)
+            i += 1
+        print("\n\n******************************************************************")
+        print("***************** Archivo Creado con "+str(i)+" registros ***************")
+        print("******************************************************************\n\n")
         return listaPaises[1:]
     
 def crearArchivoXML(listaPaises):
@@ -66,9 +70,12 @@ def crearArchivoXML(listaPaises):
   
     xml_str = tree.tostring(root, encoding='utf-8')
     reparsed = minidom.parseString(xml_str)
-    with open("./ArchivosCreados/datos.xml", "wb") as archivo:
+    with open("./data/datos.xml", "wb") as archivo:
         archivo.write(reparsed.toprettyxml(indent="    ", encoding="utf-8"))
-    print("Se ha creado el archivo")
+    print("\n\n*************************************************")
+    print("***************** Archivo Creado ****************")
+    print("*************************************************\n\n")
+    return ""
 
 def seleccionarContinente(listaPaises):
     """
@@ -196,10 +203,11 @@ def crearPaisesPorContinente(listaPaises):
     opcion = seleccionarContinente(listaPaises) #Opcion = continente elegido 
     #Creación del archivo HTML
     with open(f"./data/paisesPorContinente.html","w") as archivoContinente:
+        archivoContinente.write("<meta charset='UTF-8'>")
         archivoContinente.write("<html><head><title>Paises Por Continente</title></head><body>")
-        archivoContinente.write(f"<h1>Paises de {opcion[0]}</h1>")
+        archivoContinente.write(f"<h1>Países de {opcion[0]}</h1>")
         archivoContinente.write("<table>")
-        archivoContinente.write("<tr style='background-color: #a2c8cc;'><th>Country Code</th><th>Nombre del país</th><th>Capital</th><th>Población</th><th>Área en metros cuadrados</th></tr>")
+        archivoContinente.write("<tr style='background-color: #a2c8cc;'><th>Country Code</th><th>Nombre del país</th><th>Capital</th><th>Población</th><th>Área en kilometros cuadrados</th></tr>")
         i = 0
         #Ciclo para crear cada fila
         for pais in listaPaises:
@@ -222,6 +230,7 @@ def crearPaisesPorContinente(listaPaises):
         print("\n\n***************************************************************************")
         print("************* Archivo HTML creado con " +str(i) + " registros *************")
         print("***************************************************************************\n\n")
+        return ""
 
 def crearCuantosViven(listaPaises):
     """
@@ -231,23 +240,14 @@ def crearCuantosViven(listaPaises):
     Salidas:
     paisesPorContinente.html: archivo HTML con la información pedida
     """
-    return "Función por construir"
-
-def crearGrandePeque(listaPaises):
-    """
-    Función: crea un archivo HTML con todos los países ordenados por tamaño, de mayor a menor
-    Entradas:
-    -listaPaises(list): lista con todos los datos de cada país
-    Salidas:
-    paisesPorContinente.html: archivo HTML con la información pedida
-    """
-    listaPaises.sort(key=lambda pais: float(pais[6]), reverse=True) #Ordena la lista por ara en metros cuadrados
+    listaPaises.sort(key=lambda pais: int(pais[3]), reverse=True) #Ordena la lista por el mayor número de población
     #Creación del archivo HTML
-    with open(f"./data/paisesPorTamaño.html","w") as archivoContinente:
-        archivoContinente.write("<html><head><title>Paises Por Tamaño</title></head><body>")
-        archivoContinente.write(f"<h1>Paises de mayor tamaño a menor tamaño</h1>")
-        archivoContinente.write("<table>")
-        archivoContinente.write("<tr style='background-color: #a2c8cc;'><th>Área en metros cuadrados</th><th>flipCode</th><th>Nombre del país</th><th>Continente</th></tr>")
+    with open(f"./data/paisesPorPoblacion.html","w") as archivoPoblacion:
+        archivoPoblacion.write("<meta charset='UTF-8'>")
+        archivoPoblacion.write("<html><head><title>Paises Por Poblacion</title></head><body>")
+        archivoPoblacion.write(f"<h1>Países por población de mayor a menor</h1>")
+        archivoPoblacion.write("<table>")
+        archivoPoblacion.write("<tr style='background-color: #a2c8cc;'><th>Población</th><th>isoAlpha3</th><th>Nombre del país</th><th>Área en kilometros cuadrados</th><th>Continente</th></tr>")
         i = 0
         #Ciclo para crear cada fila
         for pais in listaPaises:
@@ -255,19 +255,59 @@ def crearGrandePeque(listaPaises):
                 fondo = "#c5e0dc"
             else:
                 fondo = "#f8edeb"
-            archivoContinente.write(f"<tr style='background-color: {fondo}'>")
-            archivoContinente.write(f"<td>{pais[6]}</td>")
-            archivoContinente.write(f"<td>{pais[1][1]}</td>")
-            archivoContinente.write(f"<td>{pais[0]}</td>")
-            archivoContinente.write(f"<td>{pais[5][0]}</td>")
+            archivoPoblacion.write(f"<tr style='background-color: {fondo}'>")
+            archivoPoblacion.write(f"<td>{pais[3]}</td>")
+            archivoPoblacion.write(f"<td>{pais[1][3]}</td>")
+            archivoPoblacion.write(f"<td>{pais[0]}</td>")
+            archivoPoblacion.write(f"<td>{pais[6]}</td>")
+            archivoPoblacion.write(f"<td>{pais[5][0]}</td>")
             i += 1
-            archivoContinente.write("</tr>")
+            archivoPoblacion.write("</tr>")
         
-        archivoContinente.write("</table></body></html>")
-        archivoContinente.close()
+        archivoPoblacion.write("</table></body></html>")
+        archivoPoblacion.close()
         print("\n\n***************************************************************************")
         print("************* Archivo HTML creado con " +str(i) + " registros *************")
         print("***************************************************************************\n\n")
+    return ""
+
+def crearGrandePeque(listaPaises):
+    """
+    Función: crea un archivo HTML con todos los países ordenados por tamaño, de mayor a menor
+    Entradas:
+    -listaPaises(list): lista con todos los datos de cada país
+    Salidas:
+    paisesPorTamaño.html: archivo HTML con la información pedida
+    """
+    listaPaises.sort(key=lambda pais: float(pais[6]), reverse=True) #Ordena la lista por ara en metros cuadrados
+    #Creación del archivo HTML
+    with open(f"./data/paisesPorTamaño.html","w") as archivoTamaño:
+        archivoTamaño.write("<meta charset='UTF-8'>")
+        archivoTamaño.write("<html><head><title>Paises Por Tamaño</title></head><body>")
+        archivoTamaño.write(f"<h1>Países de mayor tamaño a menor tamaño</h1>")
+        archivoTamaño.write("<table>")
+        archivoTamaño.write("<tr style='background-color: #a2c8cc;'><th>Área en kilometros cuadrados</th><th>flipCode</th><th>Nombre del país</th><th>Continente</th></tr>")
+        i = 0
+        #Ciclo para crear cada fila
+        for pais in listaPaises:
+            if i % 2 == 0:
+                fondo = "#c5e0dc"
+            else:
+                fondo = "#f8edeb"
+            archivoTamaño.write(f"<tr style='background-color: {fondo}'>")
+            archivoTamaño.write(f"<td>{pais[6]}</td>")
+            archivoTamaño.write(f"<td>{pais[1][1]}</td>")
+            archivoTamaño.write(f"<td>{pais[0]}</td>")
+            archivoTamaño.write(f"<td>{pais[5][0]}</td>")
+            i += 1
+            archivoTamaño.write("</tr>")
+        
+        archivoTamaño.write("</table></body></html>")
+        archivoTamaño.close()
+        print("\n\n***************************************************************************")
+        print("************* Archivo HTML creado con " +str(i) + " registros *************")
+        print("***************************************************************************\n\n")
+        return ""
         
 def crearZonaAzul(listaPaises):
     """
@@ -277,7 +317,38 @@ def crearZonaAzul(listaPaises):
     Salidas:
     paisesPorContinente.html: archivo HTML con la información pedida
     """
-    return "Función por construir"
+    zonasAzules = ["Costa Rica", "United States", "Greece", "Italy", "Japan"]
+    with open(f"./data/paisesPorZonaAzul.html", "w") as archivoZonasAzules:
+        archivoZonasAzules.write("<meta charset='UTF-8'>") 
+        archivoZonasAzules.write("<html><head><title>Paises Por Zonas Azules</title></head><body>")
+        archivoZonasAzules.write("<h1>Países con Zonas Azules</h1>")
+        archivoZonasAzules.write("<table>")
+        archivoZonasAzules.write("<tr style='background-color: #a2c8cc;'><th>GeonameId</th><th>Nombre del país</th><th>CurrencyCode</th><th>Lenguajes</th><th>Capital</th><th>Población</th><th>Área en kilometros cuadrados</th></tr>")
+        i = 0
+        for zonAzul in zonasAzules:
+            for pais in listaPaises:
+                if i % 2 == 0:
+                    fondo = "#c5e0dc"
+                else:
+                    fondo = "#f8edeb" 
+                if pais[0] == zonAzul:
+                    archivoZonasAzules.write(f"<tr style='background-color: {fondo}'>")
+                    archivoZonasAzules.write(f"<td>{pais[1][4]}</td>")
+                    archivoZonasAzules.write(f"<td>{pais[0]}</td>")
+                    archivoZonasAzules.write(f"<td>{pais[2]}</td>")
+                    archivoZonasAzules.write(f"<td>{pais[7]}</td>")
+                    archivoZonasAzules.write(f"<td>{pais[4]}</td>")
+                    archivoZonasAzules.write(f"<td>{pais[3]}</td>")
+                    archivoZonasAzules.write(f"<td>{pais[6]}</td>")
+                    archivoZonasAzules.write("</tr>")
+                    i += 1
+                
+        archivoZonasAzules.write("</table></body></html>")
+        archivoZonasAzules.close()
+        print("\n\n******************************************************************************************")
+        print("************* Archivo HTML creado con " +str(i) + " cantidad de registros *************")
+        print("******************************************************************************************\n\n")
+        return ""
 
 def crearMismoIdioma(listaPaises):
     """
@@ -287,7 +358,59 @@ def crearMismoIdioma(listaPaises):
     Salidas:
     paisesPorContinente.html: archivo HTML con la información pedida
     """
-    return "Función por construir"
+    listaPaisIdioma = []
+    todosIdiomas = []
+    #Ciclo para separar cada pais por idioma, si estos se repiten, los divide con forme a todos los idiomas hablen
+    for pais in listaPaises:
+        for idiomasP in pais[7]:
+            idioma = idiomasP.split("-")[0]
+            if not idioma in todosIdiomas:
+                todosIdiomas.append(idioma)
+            listaPaisIdioma.append([idioma,pais[0],pais[5][0]])
+    
+    listaOrdenada = []
+    #Ciclo que ordena la lista con la información de lenguaje-Cantidad de paises que hablan-Nombre del pais-Nombre del continente
+    for lenguaje in todosIdiomas:
+        paisLenguaje = ""
+        continente = ""
+        cantHablantes = 0
+        for pais in listaPaisIdioma:
+            if lenguaje == pais[0] and lenguaje != "":
+                paisLenguaje += str(pais[1])+", "
+                if not pais[2] in continente:
+                    continente += str(pais[2])+", "
+                cantHablantes += 1
+        if cantHablantes >= 3:
+            listaOrdenada.append([lenguaje,cantHablantes,paisLenguaje,continente])
+    
+    #Creación del archivo HTML
+    with open(f"./data/IdiomasPorPais.html","w") as archivoMismoIdioma:
+        archivoMismoIdioma.write("<meta charset='UTF-8'>")
+        archivoMismoIdioma.write("<html><head><title>Paises por idioma</title></head><body>")
+        archivoMismoIdioma.write(f"<h1>Países por idioma</h1>")
+        archivoMismoIdioma.write("<table>")
+        archivoMismoIdioma.write("<tr style='background-color: #a2c8cc;'><th>Idioma</th><th>Cantidad de países</th><th>Nombre de los países</th><th>Nombre de los continentes</th></tr>")
+        i = 0
+        #Ciclo para crear cada fila
+        for paises in listaOrdenada:
+            if i % 2 == 0:
+                fondo = "#c5e0dc"
+            else:
+                fondo = "#f8edeb"
+            archivoMismoIdioma.write(f"<tr style='background-color: {fondo}'>")
+            archivoMismoIdioma.write(f"<td>{paises[0]}</td>")
+            archivoMismoIdioma.write(f"<td>{paises[1]}</td>")
+            archivoMismoIdioma.write(f"<td>{paises[2]}</td>")
+            archivoMismoIdioma.write(f"<td>{paises[3]}</td>")
+            i += 1
+            archivoMismoIdioma.write("</tr>")
+        
+        archivoMismoIdioma.write("</table></body></html>")
+        archivoMismoIdioma.close()
+        print("\n\n***************************************************************************")
+        print("************* Archivo HTML creado con " +str(i) + " registros *************")
+        print("***************************************************************************\n\n")
+        return ""
 
 def crearMismaMoneda(listaPaises):
     """
@@ -300,11 +423,12 @@ def crearMismaMoneda(listaPaises):
     moneda = seleccionarMoneda(listaPaises)
     listaPaises.sort(key=lambda pais: (pais[5][0], pais[0])) #Ordena la lista en continentes y a su vez a lo paises de manera alfabética 
     #Creación del archivo HTML
-    with open(f"./data/mismaMoneda.html","w") as archivoContinente:
-        archivoContinente.write("<html><head><title>Paises por misma moneda</title></head><body>")
-        archivoContinente.write(f"<h1>Paises que usan la misma moneda</h1>")
-        archivoContinente.write("<table>")
-        archivoContinente.write("<tr style='background-color: #a2c8cc;'><th>Continente</th><th>Nombre del país</th><th>Capital</th><th>Lenguajes</th></tr>")
+    with open(f"./data/mismaMoneda.html","w") as archivoMonedas:
+        archivoMonedas.write("<meta charset='UTF-8'>")
+        archivoMonedas.write("<html><head><title>Paises por misma moneda</title></head><body>")
+        archivoMonedas.write(f"<h1>Paises que usan la misma moneda</h1>")
+        archivoMonedas.write("<table>")
+        archivoMonedas.write("<tr style='background-color: #a2c8cc;'><th>Continente</th><th>Nombre del pais</th><th>Capital</th><th>Lenguajes</th></tr>")
         i = 0
         #Ciclo para crear cada fila
         for pais in listaPaises:
@@ -313,19 +437,20 @@ def crearMismaMoneda(listaPaises):
                     fondo = "#c5e0dc"
                 else:
                     fondo = "#f8edeb"
-                archivoContinente.write(f"<tr style='background-color: {fondo}'>")
-                archivoContinente.write(f"<td>{pais[5][0]}</td>")
-                archivoContinente.write(f"<td>{pais[0]}</td>")
-                archivoContinente.write(f"<td>{pais[4]}</td>")
-                archivoContinente.write(f"<td>{pais[7]}</td>")
+                archivoMonedas.write(f"<tr style='background-color: {fondo}'>")
+                archivoMonedas.write(f"<td>{pais[5][0]}</td>")
+                archivoMonedas.write(f"<td>{pais[0]}</td>")
+                archivoMonedas.write(f"<td>{pais[4]}</td>")
+                archivoMonedas.write(f"<td>{pais[7]}</td>")
                 i += 1
-                archivoContinente.write("</tr>")
+                archivoMonedas.write("</tr>")
         
-        archivoContinente.write("</table></body></html>")
-        archivoContinente.close()
+        archivoMonedas.write("</table></body></html>")
+        archivoMonedas.close()
         print("\n\n***************************************************************************")
         print("************* Archivo HTML creado con " +str(i) + " registros *************")
         print("***************************************************************************\n\n")
+        return ""
 
 def crearCodigoPais(listaPaises):
     """
@@ -338,11 +463,12 @@ def crearCodigoPais(listaPaises):
     continente = seleccionarContinente(listaPaises)
     buscarPais = seleccionarPais(listaPaises,continente)
     print(buscarPais)
-    with open(f"./data/InformeCodigosPais.html","w") as archivoContinente:
-        archivoContinente.write("<html><head><title>Informe de pais </title></head><body>")
-        archivoContinente.write(f"<h1>Informe del pais seleccionado</h1>")
-        archivoContinente.write("<table>")
-        archivoContinente.write("<tr style='background-color: #a2c8cc;'><th>Continente</th><th>Nombre del pais</th><th>CountryCode</th><th>flipCode</th><th>isoNumeric</th><th>isoAlpha3</th><th>geonameld</th></tr>")
+    with open(f"./data/InformeCodigosPais.html","w") as archivoCodigo:
+        archivoCodigo.write("<meta charset='UTF-8'>")
+        archivoCodigo.write("<html><head><title>Informe de pais </title></head><body>")
+        archivoCodigo.write(f"<h1>Informe del país seleccionado</h1>")
+        archivoCodigo.write("<table>")
+        archivoCodigo.write("<tr style='background-color: #a2c8cc;'><th>Continente</th><th>Nombre del país</th><th>CountryCode</th><th>flipCode</th><th>isoNumeric</th><th>isoAlpha3</th><th>geonameld</th></tr>")
         i = 0
         #Ciclo para crear cada fila
         for pais in listaPaises:
@@ -351,24 +477,23 @@ def crearCodigoPais(listaPaises):
                     fondo = "#c5e0dc"
                 else:
                     fondo = "#f8edeb"
-                archivoContinente.write(f"<tr style='background-color: {fondo}'>")
-                archivoContinente.write(f"<td>{pais[5][0]}</td>")
-                archivoContinente.write(f"<td>{pais[0]}</td>")
-                archivoContinente.write(f"<td>{pais[1][0]}</td>")
-                archivoContinente.write(f"<td>{pais[1][1]}</td>")
-                archivoContinente.write(f"<td>{pais[1][2]}</td>")
-                archivoContinente.write(f"<td>{pais[1][3]}</td>")
-                archivoContinente.write(f"<td>{pais[1][4]}</td>")
+                archivoCodigo.write(f"<tr style='background-color: {fondo}'>")
+                archivoCodigo.write(f"<td>{pais[5][0]}</td>")
+                archivoCodigo.write(f"<td>{pais[0]}</td>")
+                archivoCodigo.write(f"<td>{pais[1][0]}</td>")
+                archivoCodigo.write(f"<td>{pais[1][1]}</td>")
+                archivoCodigo.write(f"<td>{pais[1][2]}</td>")
+                archivoCodigo.write(f"<td>{pais[1][3]}</td>")
+                archivoCodigo.write(f"<td>{pais[1][4]}</td>")
                 i += 1
-                archivoContinente.write("</tr>")
+                archivoCodigo.write("</tr>")
         
-        archivoContinente.write("</table></body></html>")
-        archivoContinente.close()
+        archivoCodigo.write("</table></body></html>")
+        archivoCodigo.close()
         print("\n\n***************************************************************************")
         print("************* Archivo HTML creado con " +str(i) + " registros *************")
         print("***************************************************************************\n\n")
-    
-            
+        return ""  
 
 def crearHablantesIdiomas(listaPaises):
     """
@@ -403,11 +528,12 @@ def crearHablantesIdiomas(listaPaises):
     listaOrdenada.sort()
     
     #Creación del archivo HTML
-    with open(f"./data/totalHablantes.html","w") as archivoContinente:
-        archivoContinente.write("<html><head><title>Total de hablantes</title></head><body>")
-        archivoContinente.write(f"<h1>Total de hablantes por idioma</h1>")
-        archivoContinente.write("<table>")
-        archivoContinente.write("<tr style='background-color: #a2c8cc;'><th>Idioma</th><th>Paises hablantes</th><th>Total de hablantes</th></tr>")
+    with open(f"./data/totalHablantes.html","w") as archivoHablantes:
+        archivoHablantes.write("<meta charset='UTF-8'>")
+        archivoHablantes.write("<html><head><title>Total de hablantes</title></head><body>")
+        archivoHablantes.write(f"<h1>Total de hablantes por idioma</h1>")
+        archivoHablantes.write("<table>")
+        archivoHablantes.write("<tr style='background-color: #a2c8cc;'><th>Idioma</th><th>Paises hablantes</th><th>Total de hablantes</th></tr>")
         i = 0
         #Ciclo para crear cada fila
         for paises in listaOrdenada:
@@ -415,15 +541,16 @@ def crearHablantesIdiomas(listaPaises):
                 fondo = "#c5e0dc"
             else:
                 fondo = "#f8edeb"
-            archivoContinente.write(f"<tr style='background-color: {fondo}'>")
-            archivoContinente.write(f"<td>{paises[0]}</td>")
-            archivoContinente.write(f"<td>{paises[1]}</td>")
-            archivoContinente.write(f"<td>{paises[2]}</td>")
+            archivoHablantes.write(f"<tr style='background-color: {fondo}'>")
+            archivoHablantes.write(f"<td>{paises[0]}</td>")
+            archivoHablantes.write(f"<td>{paises[1]}</td>")
+            archivoHablantes.write(f"<td>{paises[2]}</td>")
             i += 1
-            archivoContinente.write("</tr>")
+            archivoHablantes.write("</tr>")
         
-        archivoContinente.write("</table></body></html>")
-        archivoContinente.close()
+        archivoHablantes.write("</table></body></html>")
+        archivoHablantes.close()
         print("\n\n***************************************************************************")
         print("************* Archivo HTML creado con " +str(i) + " registros *************")
         print("***************************************************************************\n\n")
+        return ""
